@@ -12,21 +12,32 @@
 \section{\mf\ Philosophy}
 
 The principle goal of \mf\ is to take point cloud data representing mirror surfaces and other optical elements of a telescope and provide alignment solutions and mirror surface quality analysis.
+We assume that telescopes are divided into distinct optical elements or surfaces whose forms and relative positions are specified by a theoretical optical design. 
+Measured point cloud data come in the form of a discrete set of three-dimensional points $\sfont{P}$, with each $\bf{p_i} \in \sfont{P}$ having an associated error $\pmb{\sigma_{i}}$. 
+For a typical alignment procedure the data $\sfont{P}$ will be measured in the same coordinate system but divided into non-intersecting subsets $\sfont{E}_j \subset \sfont{P}$, each corresponding to a particular element of the optical design (i.e. primary mirror, secondary mirror, receiver).
 
-Measured point cloud data comes in the form of a discrete set of N three-dimensional points $\sfont{P}$, with each $p_n \in \sfont{P}$ optionally having an associated error $\sigma_{n}$. 
-For a typical alignment procedure the data $\sfont{P}$ will be measured in the same coordinate system but divided into M non-intersecting subsets $\sfont{E}_m \subset \sfont{P}$, each corresponding to a particular optical element of the telescope.
+\mf\ needs a way to use all points measured in each $\sfont{E}_j$ to determine the position of the corresponding element within the measurement coordinate system.
+Creating this mapping between measured points and the location of a theoretical element allows \mf\ to determine how optical elements are positioned with respect to each other in the measured data. 
+Developing an alignment solution for a telescope then involves finding a set of transformations, one for each $\sfont{E}_j$, that when applied to the points in $\sfont{E}_j$ leave all the telescope elements in their theoretically desired positions and orientations.
 
-\mf\ needs some way of associating all points in each $\sfont{E}_m$ to a particular location on the optical element they correspond to.
-This association allows an estimate of the location and orientation of the element in the coordinate system of the measurement, which is required for aligning. 
+Establishing a mapping between a set of points and a mirror's position and orientation can be challenging.
+In our framework a theoretical mirror surface corresponds to a two-dimensional set of points $\sfont{M}$ located in three-dimensional space.
+Typically this will be a quadric surface with some given position and orientation.
+For each point $m \in \sfont{M}$ we assume there is an associated surface normal vector $\pmb{\hat{n}_m}$.
+Physical mirror surfaces are constructed to approximate the theoretical surfaces but will always have some intrinsic error. 
+Thus we assume that every point $m$ on a real mirror is distorted by $\delta_m$ along the theoretical surface normal at that point. 
+Given a measured point $\bf{p_0}$ on a mirror we require a way to find the minimum $\delta_0$ such that for some $\bf{p_{\sfont{M}0}} \in \sfont{M}$ we can write:
+$$\bf{p_0 = }\bf{p_{\sfont{M}0}} + \delta_0 \pmb{\hat{n}_0}.$$
+\mf\ can then identify the optimum way to use the set of points $\sfont{E}_\sfont{M}$ to represent the mirror location by minimizing: 
+$$\sum_{\bf{p_j} \in \sfont{E}_\sfont{M}} \delta_j^2.$$ 
+For computational reasons this calculation is done assuming all of the $\delta$s are small and expanding to linear order in $\delta$. 
+%TODO can we rewrite the last part of this paragraph to also be compatible with the HMC procedure? 
 
-The simplest way to make this association is by measuring reference points whose relative position on each element is known in advance.
-This method must be employed when elements directly corresponding to theoretically defined optical surfaces cannot have photogrammetry targets applied to them because they are delicate or inside of a cryostat or in some other way inaccessible during final alignment.
-It can also be employed when optical surfaces are constructed with precise reference locations, such as tooling ball holes, at designed locations on their surface. 
-However, when optical surfaces are available to be measured directly, it is usually possible to optimize mirror locations beyond what would be  
-A theoretical mirror surface corresponds to a two-dimensional set of points $\sfont{M}$ located in three-dimensional space. Typically this will be a quadric surface with some given position and orientation. For each point
-$m \in \sfont{M}$ we assume there is an associated surface normal vector $\hat{n}$. 
 
-Developing an alignment solution for a telescope corresponds to finding M transformations, one for each $\sfont{E}_m$, that when applied to the points in $\sfont{E}_m$ leave all the telescope elements in their theoretical desired locations according to an optical design.
+Mappings between sets of points and positions and orientations of elements can also be created by measuring reference points whose position on an element are specified in advance.
+This method must be employed when elements directly corresponding to optical surfaces cannot have photogrammetry targets applied to them because they are delicate or inaccessible during final alignment.
+It can also be employed when optical surfaces are constructed with precise reference points at designed locations on their surface.
 
+However, when optical surfaces are available for direct measurement, it is usually possible to use the photogrammetry data to take into account surface imperfections and find a more optimum location.
 
 \end{document}
